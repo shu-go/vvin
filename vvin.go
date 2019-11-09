@@ -121,6 +121,7 @@ type resizeCmd struct {
 
 func (c resizeCmd) Run(g globalCmd) {
 	if !c.NoRestorable {
+		showWindow.Call(uintptr(g.targetHandle), SW_HIDE)
 		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
 	}
 	setWindowPos.Call(
@@ -131,6 +132,9 @@ func (c resizeCmd) Run(g globalCmd) {
 		uintptr(toInt(c.Width, g.scrWidth)),
 		uintptr(toInt(c.Height, g.scrHeight)),
 		SWP_NOACTIVATE|SWP_NOZORDER)
+	if !c.NoRestorable {
+		showWindow.Call(uintptr(g.targetHandle), SW_SHOWNA)
+	}
 }
 
 type moveCmd struct {
@@ -146,6 +150,7 @@ func (c moveCmd) Run(g globalCmd) {
 	}{}
 
 	if !c.NoRestorable {
+		showWindow.Call(uintptr(g.targetHandle), SW_HIDE)
 		getWindowRect.Call(uintptr(g.targetHandle), uintptr(unsafe.Pointer(&rect)))
 		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
 		setWindowPos.Call(
@@ -156,6 +161,7 @@ func (c moveCmd) Run(g globalCmd) {
 			uintptr(rect.Right-rect.Left),
 			uintptr(rect.Bottom-rect.Top),
 			SWP_NOACTIVATE|SWP_NOZORDER)
+		showWindow.Call(uintptr(g.targetHandle), SW_SHOWNA)
 	} else {
 		setWindowPos.Call(
 			uintptr(g.targetHandle),
@@ -196,6 +202,8 @@ const (
 	SW_MAXIMIZE = 3
 	SW_MINIMIZE = 6
 	SW_RESTORE  = 9
+	SW_HIDE     = 0
+	SW_SHOWNA   = 8
 
 	SWP_NOACTIVATE = 0x0010
 	SWP_NOSIZE     = 0x0001

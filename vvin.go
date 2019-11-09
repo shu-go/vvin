@@ -111,12 +111,49 @@ func (c maxCmd) Run(g globalCmd) {
 }
 
 type resizeCmd struct {
-	Left   string `cli:"left,x" default:"0"`
-	Top    string `cli:"top,y"  default:"0"`
-	Width  string `cli:"width,w"  help:"(default: screen size)"`
-	Height string `cli:"height,h" help:"(default: screen size)"`
+	Left   string `cli:"left,x"`
+	Top    string `cli:"top,y"`
+	Width  string `cli:"width,w"`
+	Height string `cli:"height,h"`
 
 	NoRestorable bool `cli:"norestorable"`
+
+	rect RECT
+}
+
+func (c *resizeCmd) Before(g globalCmd) error {
+	if c.Left == "" && c.Top == "" && c.Width == "" && c.Height == "" {
+		return errors.New("no options")
+	}
+
+	getWindowRect.Call(uintptr(g.targetHandle), uintptr(unsafe.Pointer(&c.rect)))
+
+	oldrect := c.rect
+
+	if g.Debug {
+		rog.Print(oldrect)
+	}
+	if c.Left != "" {
+		c.rect.Left = toInt(c.Left, g.scrWidth)
+	}
+	if c.Top != "" {
+		c.rect.Top = toInt(c.Top, g.scrHeight)
+	}
+	if c.Width != "" {
+		c.rect.Right = c.rect.Left + toInt(c.Width, g.scrWidth)
+	} else {
+		c.rect.Right = c.rect.Left + (oldrect.Right - oldrect.Left)
+	}
+	if c.Height != "" {
+		c.rect.Bottom = c.rect.Top + toInt(c.Height, g.scrHeight)
+	} else {
+		c.rect.Bottom = c.rect.Top + (oldrect.Bottom - oldrect.Top)
+	}
+	if g.Debug {
+		rog.Print(c.rect)
+	}
+
+	return nil
 }
 
 func (c resizeCmd) Run(g globalCmd) {
@@ -127,10 +164,10 @@ func (c resizeCmd) Run(g globalCmd) {
 	setWindowPos.Call(
 		uintptr(g.targetHandle),
 		0,
-		uintptr(toInt(c.Left, g.scrWidth)),
-		uintptr(toInt(c.Top, g.scrHeight)),
-		uintptr(toInt(c.Width, g.scrWidth)),
-		uintptr(toInt(c.Height, g.scrHeight)),
+		uintptr(c.rect.Left),
+		uintptr(c.rect.Top),
+		uintptr(c.rect.Right-c.rect.Left),
+		uintptr(c.rect.Bottom-c.rect.Top),
 		SWP_NOACTIVATE|SWP_NOZORDER)
 	if !c.NoRestorable {
 		showWindow.Call(uintptr(g.targetHandle), SW_SHOWNA)
@@ -138,36 +175,60 @@ func (c resizeCmd) Run(g globalCmd) {
 }
 
 type moveCmd struct {
-	Left string `cli:"left,x" default:"0"`
-	Top  string `cli:"top,y"  default:"0"`
+	Left string `cli:"left,x"`
+	Top  string `cli:"top,y"`
 
 	NoRestorable bool `cli:"norestorable"`
+
+	rect RECT
+}
+
+func (c *moveCmd) Before(g globalCmd) error {
+	if c.Left == "" && c.Top == "" {
+		return errors.New("no options")
+	}
+
+	getWindowRect.Call(uintptr(g.targetHandle), uintptr(unsafe.Pointer(&c.rect)))
+
+	if g.Debug {
+		rog.Print(c.rect)
+	}
+	if c.Left != "" {
+		old := c.rect.Left
+		c.rect.Left = toInt(c.Left, g.scrWidth)
+		c.rect.Right += -old + c.rect.Left
+	}
+	if c.Top != "" {
+		old := c.rect.Top
+		c.rect.Top = toInt(c.Top, g.scrHeight)
+		c.rect.Bottom += -old + c.rect.Top
+	}
+	if g.Debug {
+		rog.Print(c.rect)
+	}
+
+	return nil
 }
 
 func (c moveCmd) Run(g globalCmd) {
-	rect := struct {
-		Left, Top, Right, Bottom int32
-	}{}
-
 	if !c.NoRestorable {
 		showWindow.Call(uintptr(g.targetHandle), SW_HIDE)
-		getWindowRect.Call(uintptr(g.targetHandle), uintptr(unsafe.Pointer(&rect)))
 		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
 		setWindowPos.Call(
 			uintptr(g.targetHandle),
 			0,
-			uintptr(toInt(c.Left, g.scrWidth)),
-			uintptr(toInt(c.Top, g.scrHeight)),
-			uintptr(rect.Right-rect.Left),
-			uintptr(rect.Bottom-rect.Top),
+			uintptr(c.rect.Left),
+			uintptr(c.rect.Top),
+			uintptr(c.rect.Right-c.rect.Left),
+			uintptr(c.rect.Bottom-c.rect.Top),
 			SWP_NOACTIVATE|SWP_NOZORDER)
 		showWindow.Call(uintptr(g.targetHandle), SW_SHOWNA)
 	} else {
 		setWindowPos.Call(
 			uintptr(g.targetHandle),
 			0,
-			uintptr(toInt(c.Left, g.scrWidth)),
-			uintptr(toInt(c.Top, g.scrHeight)),
+			uintptr(c.rect.Left),
+			uintptr(c.rect.Top),
 			0,
 			0,
 			SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOSIZE)
@@ -220,6 +281,10 @@ type (
 		Title  string
 		Handle syscall.Handle
 		PID    int
+	}
+
+	RECT struct {
+		Left, Top, Right, Bottom int32
 	}
 )
 
@@ -290,7 +355,7 @@ func ancestors() []int {
 	return an
 }
 
-func toInt(s string, max int) int {
+func toInt(s string, max int) int32 {
 	if strings.HasSuffix(s, "%") {
 		i, err := strconv.Atoi(s[:len(s)-1])
 		if err != nil {
@@ -299,12 +364,12 @@ func toInt(s string, max int) int {
 		if i > 100 {
 			i = 100
 		}
-		return int(math.Trunc(float64(max*i) / 100))
+		return int32(math.Trunc(float64(max*i) / 100))
 	} else {
 		i, err := strconv.Atoi(s)
 		if err != nil {
 			return 0
 		}
-		return i
+		return int32(i)
 	}
 }

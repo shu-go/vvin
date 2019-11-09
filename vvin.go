@@ -32,8 +32,7 @@ type globalCmd struct {
 	Minimize minCmd     `cli:"minimize,min"`
 	Maximize maxCmd     `cli:"maximize,max"`
 	Restore  restoreCmd `cli:"restore"`
-	Resize   resizeCmd  `cli:"resize"`
-	Move     moveCmd    `cli:"move,mv"`
+	Resize   resizeCmd  `cli:"resize,move,mv"`
 
 	targetHandle syscall.Handle
 
@@ -169,67 +168,6 @@ func (c resizeCmd) Run(g globalCmd) {
 		SWP_NOACTIVATE|SWP_NOZORDER)
 	if !c.NoRestorable {
 		showWindow.Call(uintptr(g.targetHandle), SW_SHOWNA)
-	}
-}
-
-type moveCmd struct {
-	Left string `cli:"left,x"`
-	Top  string `cli:"top,y"`
-
-	NoRestorable bool `cli:"norestorable"`
-
-	rect RECT
-}
-
-func (c *moveCmd) Before(g globalCmd) error {
-	if c.Left == "" && c.Top == "" {
-		return errors.New("no options")
-	}
-
-	getWindowRect.Call(uintptr(g.targetHandle), uintptr(unsafe.Pointer(&c.rect)))
-
-	if g.Debug {
-		rog.Print(c.rect)
-	}
-	if c.Left != "" {
-		old := c.rect.Left
-		c.rect.Left = toInt(c.Left, g.scrWidth)
-		c.rect.Right += -old + c.rect.Left
-	}
-	if c.Top != "" {
-		old := c.rect.Top
-		c.rect.Top = toInt(c.Top, g.scrHeight)
-		c.rect.Bottom += -old + c.rect.Top
-	}
-	if g.Debug {
-		rog.Print(c.rect)
-	}
-
-	return nil
-}
-
-func (c moveCmd) Run(g globalCmd) {
-	if !c.NoRestorable {
-		showWindow.Call(uintptr(g.targetHandle), SW_HIDE)
-		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
-		setWindowPos.Call(
-			uintptr(g.targetHandle),
-			0,
-			uintptr(c.rect.Left),
-			uintptr(c.rect.Top),
-			uintptr(c.rect.Right-c.rect.Left),
-			uintptr(c.rect.Bottom-c.rect.Top),
-			SWP_NOACTIVATE|SWP_NOZORDER)
-		showWindow.Call(uintptr(g.targetHandle), SW_SHOWNA)
-	} else {
-		setWindowPos.Call(
-			uintptr(g.targetHandle),
-			0,
-			uintptr(c.rect.Left),
-			uintptr(c.rect.Top),
-			0,
-			0,
-			SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOSIZE)
 	}
 }
 

@@ -6,12 +6,22 @@ import (
 	"os"
 	"strings"
 	"syscall"
+	"time"
 	"unsafe"
 
 	"github.com/mitchellh/go-ps"
 	"github.com/shu-go/gli"
 	"github.com/shu-go/rog"
 )
+
+// Version is app version
+var Version string
+
+func init() {
+	if Version == "" {
+		Version = "dev-" + time.Now().Format("20060102")
+	}
+}
 
 type globalCmd struct {
 	Target string `cli:"target,t=WINDOW_TITLE" help:"default to current window"`
@@ -159,7 +169,7 @@ func main() {
 	app := gli.NewWith(&globalCmd{})
 	app.Name = "vvin"
 	app.Desc = ""
-	app.Version = "0.0.0"
+	app.Version = Version
 	app.Usage = ``
 	app.Copyright = "(C) 2019 Shuhei Kubota"
 	app.Run(os.Args)

@@ -1,0 +1,12 @@
+github.com/mattn/go-runewidth v0.0.4 h1:2BvfKmzob6Bmd4YsL0zygOqfdFnK7GR4QL06Do4/p7Y=
+github.com/mattn/go-runewidth v0.0.4/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
+github.com/mitchellh/go-ps v0.0.0-20190716172923-621e5597135b h1:9+ke9YJ9KGWw5ANXK6ozjoK47uI3uNbXv4YVINBnGm8=
+github.com/mitchellh/go-ps v0.0.0-20190716172923-621e5597135b/go.mod h1:r1VsdOzOPt1ZSrGZWFoNhsAedKnEd6r9Np1+5blZCWk=
+github.com/shu-go/cliparser v0.0.0-20190822025044-17b54d2ae1aa h1:/o4k5mrlZXF78Ql4IbmbQwaqGklOYMPd0uQpyGxmYLg=
+github.com/shu-go/cliparser v0.0.0-20190822025044-17b54d2ae1aa/go.mod h1:b89EpZSowgrnN/iRGjwCHlRcIMMQjOGm3NmffyFpF9M=
+github.com/shu-go/clise v0.0.0-20190822023516-79849fb81cfe/go.mod h1:VLiMEzXMBozBLD37i3id3qPflaupus48v/979ipQ43s=
+github.com/shu-go/gli v0.0.0-20191003020935-c6817caa1c0a h1:N7WMOChI8J5Dx22ZNbg4xaogju9gKARbjWmNaLo5irM=
+github.com/shu-go/gli v0.0.0-20191003020935-c6817caa1c0a/go.mod h1:F0pECDJ/7sP7e6/BlCGNScgK3O3dOLo/0d8CeH1Z7Ks=
+github.com/shu-go/gotwant v0.0.0-20190822031422-724391433f13/go.mod h1:UxvcvxZEQUBw6lS9UgXOPh1outjvx2+bvDlEOpCTuGo=
+github.com/shu-go/rog v0.0.0-20190826055139-09f31aeaaebd h1:4HEm7TeZfpMp8mrjUoRt0MxTCvJrakuRn3rSbOSOBqE=
+github.com/shu-go/rog v0.0.0-20190826055139-09f31aeaaebd/go.mod h1:z2vjwV5lUEhVBjFneBZQECuBiel1kmKuU0sVJCwysDY=

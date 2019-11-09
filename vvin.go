@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 	"os"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -34,7 +36,8 @@ type globalCmd struct {
 
 	targetHandle syscall.Handle
 
-	scrWidth, scrHeight int
+	scrWidth, scrHeight     int
+	frameWidth, frameHeight int
 }
 
 func (c *globalCmd) Before() error {
@@ -108,10 +111,10 @@ func (c maxCmd) Run(g globalCmd) {
 }
 
 type resizeCmd struct {
-	Left   int `cli:"left,x"`
-	Top    int `cli:"top,y"`
-	Width  int `cli:"width,w"`
-	Height int `cli:"height,h"`
+	Left   string `cli:"left,x" default:"0"`
+	Top    string `cli:"top,y"  default:"0"`
+	Width  string `cli:"width,w"  help:"(default: screen size)"`
+	Height string `cli:"height,h" help:"(default: screen size)"`
 
 	NoRestorable bool `cli:"norestorable"`
 }
@@ -123,16 +126,16 @@ func (c resizeCmd) Run(g globalCmd) {
 	setWindowPos.Call(
 		uintptr(g.targetHandle),
 		0,
-		uintptr(c.Left),
-		uintptr(c.Top),
-		uintptr(c.Width),
-		uintptr(c.Height),
+		uintptr(toInt(c.Left, g.scrWidth)),
+		uintptr(toInt(c.Top, g.scrHeight)),
+		uintptr(toInt(c.Width, g.scrWidth)),
+		uintptr(toInt(c.Height, g.scrHeight)),
 		SWP_NOACTIVATE|SWP_NOZORDER)
 }
 
 type moveCmd struct {
-	Left int `cli:"left,x"`
-	Top  int `cli:"top,y"`
+	Left string `cli:"left,x" default:"0"`
+	Top  string `cli:"top,y"  default:"0"`
 
 	NoRestorable bool `cli:"norestorable"`
 }
@@ -148,8 +151,8 @@ func (c moveCmd) Run(g globalCmd) {
 		setWindowPos.Call(
 			uintptr(g.targetHandle),
 			0,
-			uintptr(c.Left),
-			uintptr(c.Top),
+			uintptr(toInt(c.Left, g.scrWidth)),
+			uintptr(toInt(c.Top, g.scrHeight)),
 			uintptr(rect.Right-rect.Left),
 			uintptr(rect.Bottom-rect.Top),
 			SWP_NOACTIVATE|SWP_NOZORDER)
@@ -157,8 +160,8 @@ func (c moveCmd) Run(g globalCmd) {
 		setWindowPos.Call(
 			uintptr(g.targetHandle),
 			0,
-			uintptr(c.Left),
-			uintptr(c.Top),
+			uintptr(toInt(c.Left, g.scrWidth)),
+			uintptr(toInt(c.Top, g.scrHeight)),
 			0,
 			0,
 			SWP_NOACTIVATE|SWP_NOZORDER|SWP_NOSIZE)
@@ -200,6 +203,8 @@ const (
 
 	SM_CXVIRTUALSCREEN = 78
 	SM_CYVIRTUALSCREEN = 79
+	SM_CXSIZEFRAME     = 32
+	SM_CYSIZEFRAME     = 33
 )
 
 type (
@@ -275,4 +280,23 @@ func ancestors() []int {
 	}
 
 	return an
+}
+
+func toInt(s string, max int) int {
+	if strings.HasSuffix(s, "%") {
+		i, err := strconv.Atoi(s[:len(s)-1])
+		if err != nil {
+			return 0
+		}
+		if i > 100 {
+			i = 100
+		}
+		return int(math.Trunc(float64(max*i) / 100))
+	} else {
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			return 0
+		}
+		return i
+	}
 }

@@ -29,10 +29,11 @@ type globalCmd struct {
 	Target string `cli:"target,t=WINDOW_TITLE" help:"default to current window"`
 	Debug  bool
 
-	Minimize minCmd    `cli:"minimize,min"`
-	Maximize maxCmd    `cli:"maximize,max"`
-	Resize   resizeCmd `cli:"resize"`
-	Move     moveCmd   `cli:"move,mv"`
+	Minimize minCmd     `cli:"minimize,min"`
+	Maximize maxCmd     `cli:"maximize,max"`
+	Restore  restoreCmd `cli:"restore"`
+	Resize   resizeCmd  `cli:"resize"`
+	Move     moveCmd    `cli:"move,mv"`
 
 	targetHandle syscall.Handle
 
@@ -87,27 +88,24 @@ func (c *globalCmd) Before() error {
 }
 
 type minCmd struct {
-	Restore bool `cli:"restore,r"`
 }
 
 func (c minCmd) Run(g globalCmd) {
-	if c.Restore {
-		showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
-	} else {
-		showWindow.Call(uintptr(g.targetHandle), SW_MINIMIZE)
-	}
+	showWindow.Call(uintptr(g.targetHandle), SW_MINIMIZE)
 }
 
 type maxCmd struct {
-	Restore bool `cli:"restore,r"`
 }
 
 func (c maxCmd) Run(g globalCmd) {
-	if c.Restore {
-		showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
-	} else {
-		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
-	}
+	showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
+}
+
+type restoreCmd struct {
+}
+
+func (c restoreCmd) Run(g globalCmd) {
+	showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
 }
 
 type resizeCmd struct {

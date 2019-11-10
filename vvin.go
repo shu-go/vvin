@@ -223,7 +223,10 @@ func main() {
 	app.Version = Version
 	app.Usage = ``
 	app.Copyright = "(C) 2019 Shuhei Kubota"
-	app.Run(os.Args)
+	app.SuppressErrorOutput = true
+	if err := app.Run(os.Args); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
 }
 
 var (

@@ -34,6 +34,7 @@ type globalCmd struct {
 	Restore  restoreCmd `cli:"restore"`
 	Resize   resizeCmd  `cli:"resize,move,mv"`
 	Alpha    alphaCmd   `cli:"alpha"`
+	Topmost  topmostCmd `cli:"topmost"`
 
 	targetHandle syscall.Handle
 
@@ -193,6 +194,26 @@ func (c alphaCmd) Run(args []string, g globalCmd) error {
 	return nil
 }
 
+type topmostCmd struct {
+	Restore bool `cli:"restore,r"`
+}
+
+func (c topmostCmd) Run(g globalCmd) {
+	hwndInsertAfter := HWND_TOPMOST
+	if c.Restore {
+		hwndInsertAfter = HWND_NOTOPMOST
+	}
+
+	setWindowPos.Call(
+		uintptr(g.targetHandle),
+		hwndInsertAfter,
+		0,
+		0,
+		0,
+		0,
+		SWP_NOSIZE|SWP_NOMOVE)
+}
+
 func main() {
 	app := gli.NewWith(&globalCmd{})
 	app.Name = "vvin"
@@ -228,9 +249,11 @@ const (
 	SW_HIDE     = 0
 	SW_SHOWNA   = 8
 
-	SWP_NOACTIVATE = 0x0010
 	SWP_NOSIZE     = 0x0001
+	SWP_NOMOVE     = 0x0002
 	SWP_NOZORDER   = 0x0004
+	SWP_NOACTIVATE = 0x0010
+	SWP_SHOWWINDOW = 0x0040
 
 	SM_CXVIRTUALSCREEN = 78
 	SM_CYVIRTUALSCREEN = 79
@@ -242,6 +265,9 @@ const (
 	WS_EX_LAYERED    = 0x80000
 
 	LWA_ALPHA = 0x2
+
+	HWND_TOPMOST   = ^uintptr(0)
+	HWND_NOTOPMOST = ^uintptr(1)
 )
 
 type (

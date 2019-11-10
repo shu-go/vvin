@@ -31,7 +31,6 @@ type globalCmd struct {
 
 	Minimize minCmd     `cli:"minimize,min"`
 	Maximize maxCmd     `cli:"maximize,max"`
-	Restore  restoreCmd `cli:"restore"`
 	Resize   resizeCmd  `cli:"resize,move,mv"`
 	Alpha    alphaCmd   `cli:"alpha"`
 	Topmost  topmostCmd `cli:"topmost"`
@@ -89,24 +88,27 @@ func (c *globalCmd) Before() error {
 }
 
 type minCmd struct {
+	Restore bool `cli:"restore,r"`
 }
 
 func (c minCmd) Run(g globalCmd) {
-	showWindow.Call(uintptr(g.targetHandle), SW_MINIMIZE)
+	if c.Restore {
+		showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
+	} else {
+		showWindow.Call(uintptr(g.targetHandle), SW_MINIMIZE)
+	}
 }
 
 type maxCmd struct {
+	Restore bool `cli:"restore,r"`
 }
 
 func (c maxCmd) Run(g globalCmd) {
-	showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
-}
-
-type restoreCmd struct {
-}
-
-func (c restoreCmd) Run(g globalCmd) {
-	showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
+	if c.Restore {
+		showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
+	} else {
+		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
+	}
 }
 
 type resizeCmd struct {

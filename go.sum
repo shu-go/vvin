@@ -7,6 +7,7 @@ github.com/shu-go/cliparser v0.0.0-20190822025044-17b54d2ae1aa/go.mod h1:b89EpZS
 github.com/shu-go/clise v0.0.0-20190822023516-79849fb81cfe/go.mod h1:VLiMEzXMBozBLD37i3id3qPflaupus48v/979ipQ43s=
 github.com/shu-go/gli v0.0.0-20191003020935-c6817caa1c0a h1:N7WMOChI8J5Dx22ZNbg4xaogju9gKARbjWmNaLo5irM=
 github.com/shu-go/gli v0.0.0-20191003020935-c6817caa1c0a/go.mod h1:F0pECDJ/7sP7e6/BlCGNScgK3O3dOLo/0d8CeH1Z7Ks=
+github.com/shu-go/gotwant v0.0.0-20190822031422-724391433f13 h1:ny9pVZ7fzuKapDWhfcQwVD5XtO/WUqYDt3BeOgbj+3o=
 github.com/shu-go/gotwant v0.0.0-20190822031422-724391433f13/go.mod h1:UxvcvxZEQUBw6lS9UgXOPh1outjvx2+bvDlEOpCTuGo=
 github.com/shu-go/rog v0.0.0-20190826055139-09f31aeaaebd h1:4HEm7TeZfpMp8mrjUoRt0MxTCvJrakuRn3rSbOSOBqE=
 github.com/shu-go/rog v0.0.0-20190826055139-09f31aeaaebd/go.mod h1:z2vjwV5lUEhVBjFneBZQECuBiel1kmKuU0sVJCwysDY=

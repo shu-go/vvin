@@ -33,6 +33,7 @@ type globalCmd struct {
 	Maximize maxCmd     `cli:"maximize,max"`
 	Restore  restoreCmd `cli:"restore"`
 	Resize   resizeCmd  `cli:"resize,move,mv"`
+	Alpha    alphaCmd   `cli:"alpha"`
 
 	targetHandle syscall.Handle
 
@@ -171,6 +172,28 @@ func (c resizeCmd) Run(g globalCmd) {
 	}
 }
 
+type alphaCmd struct {
+}
+
+func (c alphaCmd) Run(args []string, g globalCmd) error {
+	if len(args) != 1 {
+		return errors.New("an argument is required")
+	}
+
+	alpha := toInt(args[0], 255)
+
+	style, _, _ := getWindowLong.Call(uintptr(g.targetHandle), GWL_EXSTYLE)
+	setWindowLong.Call(uintptr(g.targetHandle), GWL_EXSTYLE, style|WS_EX_LAYERED)
+
+	if alpha == 255 {
+		setWindowLong.Call(uintptr(g.targetHandle), GWL_EXSTYLE, style&^WS_EX_LAYERED)
+	} else {
+		setLayeredWindowAttributes.Call(uintptr(g.targetHandle), 0, uintptr(alpha), LWA_ALPHA)
+	}
+
+	return nil
+}
+
 func main() {
 	app := gli.NewWith(&globalCmd{})
 	app.Name = "vvin"
@@ -193,6 +216,10 @@ var (
 	setWindowPos             = user32.NewProc("SetWindowPos")
 	getWindowRect            = user32.NewProc("GetWindowRect")
 	getSystemMetrics         = user32.NewProc("GetSystemMetrics")
+
+	setLayeredWindowAttributes = user32.NewProc("SetLayeredWindowAttributes")
+	getWindowLong              = user32.NewProc("GetWindowLongW")
+	setWindowLong              = user32.NewProc("SetWindowLongW")
 )
 
 const (
@@ -210,6 +237,12 @@ const (
 	SM_CYVIRTUALSCREEN = 79
 	SM_CXSIZEFRAME     = 32
 	SM_CYSIZEFRAME     = 33
+
+	GWL_EXSTYLE      = 0xFFFFFFEC
+	WS_EX_TOOLWINDOW = 0x00000080
+	WS_EX_LAYERED    = 0x80000
+
+	LWA_ALPHA = 0x2
 )
 
 type (

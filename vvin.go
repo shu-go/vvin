@@ -27,13 +27,13 @@ func init() {
 
 type globalCmd struct {
 	Target string `cli:"target,t=WINDOW_TITLE" help:"default to current window"`
-	Debug  bool
+	Debug  bool   `help:"output debug info"`
 
-	Minimize minCmd     `cli:"minimize,min"`
-	Maximize maxCmd     `cli:"maximize,max"`
-	Resize   resizeCmd  `cli:"resize,move,mv"`
-	Alpha    alphaCmd   `cli:"alpha"`
-	Topmost  topmostCmd `cli:"topmost"`
+	Minimize minCmd     `cli:"minimize,min" help:"minimize/restore"`
+	Maximize maxCmd     `cli:"maximize,max" help:"maximize/restore"`
+	Resize   resizeCmd  `cli:"resize,move,mv" help:"resize/move"`
+	Alpha    alphaCmd   `cli:"alpha"   help:"set alpha 0%(transparent) - 100%(opaque)"`
+	Topmost  topmostCmd `cli:"topmost" help:"set always on top/restore"`
 
 	targetHandle syscall.Handle
 
@@ -219,7 +219,7 @@ func (c topmostCmd) Run(g globalCmd) {
 func main() {
 	app := gli.NewWith(&globalCmd{})
 	app.Name = "vvin"
-	app.Desc = ""
+	app.Desc = "Change window properties for Windows"
 	app.Version = Version
 	app.Usage = ``
 	app.Copyright = "(C) 2019 Shuhei Kubota"

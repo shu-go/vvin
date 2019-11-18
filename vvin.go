@@ -13,7 +13,6 @@ import (
 
 	"github.com/mitchellh/go-ps"
 	"github.com/shu-go/gli"
-	"github.com/shu-go/rog"
 )
 
 // Version is app version
@@ -47,55 +46,11 @@ func (c *globalCmd) Before() error {
 		return err
 	}
 
-	an := ancestors()
-
-	if c.Target == "" {
-	loopConsole:
-		for _, p := range an {
-			for _, w := range wins {
-				if w.PID == p {
-					if c.Debug {
-						rog.Printf("win: %#v", w)
-					}
-
-					c.targetHandle = w.Handle
-					break loopConsole
-				}
-			}
-		}
-	} else {
-		t := strings.ToLower(c.Target)
-
-		for _, w := range wins {
-			ancestor := false
-			for _, p := range an {
-				if w.PID == p {
-					ancestor = true
-					break
-				}
-			}
-
-			if c.Debug {
-				rog.Printf("win: %#v (ancestor? %v)", w, ancestor)
-			}
-
-			if t != "" && !ancestor {
-				wt := strings.ToLower(w.Title)
-
-				if strings.Contains(wt, t) {
-					c.targetHandle = w.Handle
-					break
-				}
-			} else if t == "" && ancestor {
-				c.targetHandle = w.Handle
-				break
-			}
-		}
-	}
-
-	if c.targetHandle == 0 {
+	win := findFirstTarget(c.Target, wins, ancestors())
+	if win == nil {
 		return errors.New("no target")
 	}
+	c.targetHandle = win.Handle
 
 	w, _, _ := getSystemMetrics.Call(SM_CXVIRTUALSCREEN)
 	h, _, _ := getSystemMetrics.Call(SM_CYVIRTUALSCREEN)
@@ -260,4 +215,40 @@ func toInt(s string, max int) int32 {
 		}
 		return int32(i)
 	}
+}
+
+func findFirstTarget(title string, wins []*Window, ancestors []int) *Window {
+	if title == "" {
+		for _, p := range ancestors {
+			for _, w := range wins {
+				if w.PID == p {
+					return w
+				}
+			}
+		}
+	} else {
+		t := strings.ToLower(title)
+
+		for _, w := range wins {
+			ancestor := false
+			for _, p := range ancestors {
+				if w.PID == p {
+					ancestor = true
+					break
+				}
+			}
+
+			if t != "" && !ancestor {
+				wt := strings.ToLower(w.Title)
+
+				if strings.Contains(wt, t) {
+					return w
+				}
+			} else if t == "" && ancestor {
+				return w
+			}
+		}
+	}
+
+	return nil
 }

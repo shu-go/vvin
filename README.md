@@ -12,6 +12,7 @@ Sub commands:
   resize, move, mv  resize/move
   alpha             set alpha 0%(transparent) - 100%(opaque)
   topmost           set always on top/restore
+  wait              wait for a window is opened/closed ([--close] {Title})
 
 Options:
   -t, --target WINDOW_TITLE  default to current window
@@ -46,3 +47,18 @@ Options:
 > ./vvin -t notepad topmost --restore
 > ./vvin -t notepad topmost -r
 ```
+
+## wait
+
+### wait for a window to appear
+
+```
+> ./vvin wait notepad
+```
+
+### wait closed
+
+```
+> ./vvin wait notepad --closed
+```
+

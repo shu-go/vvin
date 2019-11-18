@@ -33,7 +33,7 @@ type globalCmd struct {
 	Resize   resizeCmd  `cli:"resize,move,mv" help:"resize/move"`
 	Alpha    alphaCmd   `cli:"alpha"   help:"set alpha 0%(transparent) - 100%(opaque)"`
 	Topmost  topmostCmd `cli:"topmost" help:"set always on top/restore"`
-	Wait     waitCmd    `cli:"wait"`
+	Wait     waitCmd    `cli:"wait" help:"wait for a window is opened/closed ([--close] {Title})"`
 
 	targetHandle syscall.Handle
 

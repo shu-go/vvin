@@ -9,9 +9,9 @@ import (
 )
 
 type waitCmd struct {
-	_ struct{} `help:"[--wait] {Title}"`
+	_ struct{} `help:"[--close] {Title}"`
 
-	Closed    bool
+	Closed    bool         `help:"wait until the window is closed"`
 	Intervals gli.Duration `cli:"intervals,i=DURATION" default:"1s"`
 }
 

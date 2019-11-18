@@ -16,9 +16,9 @@ import (
 type waitCmd struct {
 	_ struct{} `help:"[--close] {Title}"`
 
-	Closed    bool         `help:"wait until the window is closed"`
-	Intervals gli.Duration `cli:"intervals,i=DURATION" default:"1s"`
-	Timeout   gli.Duration `cli:"timeout=DURATION" default:"0s" help:"zelo value means ininite"`
+	Closed   bool         `help:"wait until the window is closed"`
+	Interval gli.Duration `cli:"interval,i=DURATION" default:"1s"`
+	Timeout  gli.Duration `cli:"timeout=DURATION" default:"0s" help:"zelo value means ininite"`
 }
 
 func (c waitCmd) Run(args []string) error {
@@ -70,7 +70,7 @@ waitLoop:
 			//nop
 		}
 
-		time.Sleep(c.Intervals.Duration())
+		time.Sleep(c.Interval.Duration())
 	}
 
 	return nil

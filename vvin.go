@@ -219,13 +219,13 @@ func toInt(s string, max int) int32 {
 			i = 100
 		}
 		return int32(math.Trunc(float64(max*i) / 100))
-	} else {
-		i, err := strconv.Atoi(s)
-		if err != nil {
-			return 0
-		}
-		return int32(i)
 	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+	return int32(i)
 }
 
 func findFirstTarget(title string, wins []*window, ancestors []int) *window {

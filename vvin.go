@@ -48,30 +48,48 @@ func (c *globalCmd) Before() error {
 	}
 
 	an := ancestors()
-	t := strings.ToLower(c.Target)
 
-	for _, w := range wins {
-		ancestor := false
+	if c.Target == "" {
+	loopConsole:
 		for _, p := range an {
-			if w.PID == p {
-				ancestor = true
-				break
+			for _, w := range wins {
+				if w.PID == p {
+					if c.Debug {
+						rog.Printf("win: %#v", w)
+					}
+
+					c.targetHandle = w.Handle
+					break loopConsole
+				}
 			}
 		}
+	} else {
+		t := strings.ToLower(c.Target)
 
-		if c.Debug {
-			rog.Printf("win: %#v (ancestor? %v)", w, ancestor)
-		}
-		if t != "" && !ancestor {
-			wt := strings.ToLower(w.Title)
+		for _, w := range wins {
+			ancestor := false
+			for _, p := range an {
+				if w.PID == p {
+					ancestor = true
+					break
+				}
+			}
 
-			if strings.Contains(wt, t) {
+			if c.Debug {
+				rog.Printf("win: %#v (ancestor? %v)", w, ancestor)
+			}
+
+			if t != "" && !ancestor {
+				wt := strings.ToLower(w.Title)
+
+				if strings.Contains(wt, t) {
+					c.targetHandle = w.Handle
+					break
+				}
+			} else if t == "" && ancestor {
 				c.targetHandle = w.Handle
 				break
 			}
-		} else if t == "" && ancestor {
-			c.targetHandle = w.Handle
-			break
 		}
 	}
 

@@ -13,13 +13,15 @@ type resizeCmd struct {
 	Width  string `cli:"width,w"`
 	Height string `cli:"height,h"`
 
+	Restore bool `cli:"restore,r"`
+
 	NoRestorable bool `cli:"norestorable"`
 
 	rect RECT
 }
 
 func (c *resizeCmd) Before(g globalCmd) error {
-	if c.Left == "" && c.Top == "" && c.Width == "" && c.Height == "" {
+	if c.Left == "" && c.Top == "" && c.Width == "" && c.Height == "" && !c.Restore {
 		return errors.New("no options")
 	}
 
@@ -47,13 +49,22 @@ func (c *resizeCmd) Before(g globalCmd) error {
 		c.rect.Bottom = c.rect.Top + (oldrect.Bottom - oldrect.Top)
 	}
 	if g.Debug {
-		rog.Print(c.rect)
+		if c.Restore {
+			rog.Print("restore")
+		} else {
+			rog.Print(c.rect)
+		}
 	}
 
 	return nil
 }
 
 func (c resizeCmd) Run(g globalCmd) {
+	if c.Restore {
+		showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
+		return
+	}
+
 	if !c.NoRestorable {
 		showWindow.Call(uintptr(g.targetHandle), SW_HIDE)
 		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)

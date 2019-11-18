@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/shu-go/gli"
@@ -34,6 +36,11 @@ func (c waitCmd) Run(args []string) error {
 		ctx, _ = context.WithTimeout(context.Background(), c.Timeout.Duration())
 	}
 
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, os.Interrupt)
+
+	fmt.Println("Press Ctrl+C to cancel.")
+
 waitLoop:
 	for {
 		wins, err := listAllWindows()
@@ -53,6 +60,9 @@ waitLoop:
 		}
 
 		select {
+		case <-signalChan:
+			fmt.Fprintln(os.Stderr, "cancelled")
+			break waitLoop
 		case <-ctx.Done():
 			fmt.Fprintln(os.Stderr, "cancelled")
 			break waitLoop

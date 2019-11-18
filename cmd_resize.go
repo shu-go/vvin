@@ -17,7 +17,7 @@ type resizeCmd struct {
 
 	NoRestorable bool `cli:"norestorable"`
 
-	rect RECT
+	rect rect
 }
 
 func (c *resizeCmd) Before(g globalCmd) error {
@@ -61,13 +61,13 @@ func (c *resizeCmd) Before(g globalCmd) error {
 
 func (c resizeCmd) Run(g globalCmd) {
 	if c.Restore {
-		showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
+		showWindow.Call(uintptr(g.targetHandle), swRestore)
 		return
 	}
 
 	if !c.NoRestorable {
-		showWindow.Call(uintptr(g.targetHandle), SW_HIDE)
-		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
+		showWindow.Call(uintptr(g.targetHandle), swHide)
+		showWindow.Call(uintptr(g.targetHandle), swMaximize)
 	}
 	setWindowPos.Call(
 		uintptr(g.targetHandle),
@@ -76,8 +76,8 @@ func (c resizeCmd) Run(g globalCmd) {
 		uintptr(c.rect.Top),
 		uintptr(c.rect.Right-c.rect.Left),
 		uintptr(c.rect.Bottom-c.rect.Top),
-		SWP_NOACTIVATE|SWP_NOZORDER)
+		swpNoActivate|swpNoZOrder)
 	if !c.NoRestorable {
-		showWindow.Call(uintptr(g.targetHandle), SW_SHOWNA)
+		showWindow.Call(uintptr(g.targetHandle), swShowNA)
 	}
 }

@@ -6,9 +6,9 @@ type minCmd struct {
 
 func (c minCmd) Run(g globalCmd) {
 	if c.Restore {
-		showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
+		showWindow.Call(uintptr(g.targetHandle), swRestore)
 	} else {
-		showWindow.Call(uintptr(g.targetHandle), SW_MINIMIZE)
+		showWindow.Call(uintptr(g.targetHandle), smMinimize)
 	}
 }
 
@@ -18,8 +18,8 @@ type maxCmd struct {
 
 func (c maxCmd) Run(g globalCmd) {
 	if c.Restore {
-		showWindow.Call(uintptr(g.targetHandle), SW_RESTORE)
+		showWindow.Call(uintptr(g.targetHandle), swRestore)
 	} else {
-		showWindow.Call(uintptr(g.targetHandle), SW_MAXIMIZE)
+		showWindow.Call(uintptr(g.targetHandle), swMaximize)
 	}
 }

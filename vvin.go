@@ -53,8 +53,8 @@ func (c *globalCmd) Before() error {
 	}
 	c.targetHandle = win.Handle
 
-	w, _, _ := getSystemMetrics.Call(SM_CXVIRTUALSCREEN)
-	h, _, _ := getSystemMetrics.Call(SM_CYVIRTUALSCREEN)
+	w, _, _ := getSystemMetrics.Call(smCXVirtualScreen)
+	h, _, _ := getSystemMetrics.Call(smCYVirtualScreen)
 	c.scrWidth = int(w)
 	c.scrHeight = int(h)
 
@@ -90,49 +90,59 @@ var (
 	setLayeredWindowAttributes = user32.NewProc("SetLayeredWindowAttributes")
 	getWindowLong              = user32.NewProc("GetWindowLongW")
 	setWindowLong              = user32.NewProc("SetWindowLongW")
+
+	systemParametersInfo = user32.NewProc("SystemParametersInfoW")
 )
 
 const (
-	SW_MAXIMIZE = 3
-	SW_MINIMIZE = 6
-	SW_RESTORE  = 9
-	SW_HIDE     = 0
-	SW_SHOWNA   = 8
+	swMaximize = 3
+	smMinimize = 6
+	swRestore  = 9
+	swHide     = 0
+	swShowNA   = 8
 
-	SWP_NOSIZE     = 0x0001
-	SWP_NOMOVE     = 0x0002
-	SWP_NOZORDER   = 0x0004
-	SWP_NOACTIVATE = 0x0010
-	SWP_SHOWWINDOW = 0x0040
+	swpNoSize     = 0x0001
+	swpNoMove     = 0x0002
+	swpNoZOrder   = 0x0004
+	swpNoActivate = 0x0010
+	swpShowWindow = 0x0040
 
-	SM_CXVIRTUALSCREEN = 78
-	SM_CYVIRTUALSCREEN = 79
-	SM_CXSIZEFRAME     = 32
-	SM_CYSIZEFRAME     = 33
+	smCXVirtualScreen = 78
+	smCYVirtualScreen = 79
+	smCXSizeFrame     = 32
+	smCYSizeFrame     = 33
 
-	GWL_EXSTYLE      = 0xFFFFFFEC
-	WS_EX_TOOLWINDOW = 0x00000080
-	WS_EX_LAYERED    = 0x80000
+	gwlEXStyle     = 0xFFFFFFEC
+	wsEXToolWindow = 0x00000080
+	wsEXLayered    = 0x80000
 
-	LWA_ALPHA = 0x2
+	lwaAlpha = 0x2
 
-	HWND_TOPMOST   = ^uintptr(0)
-	HWND_NOTOPMOST = ^uintptr(1)
+	hwndTopmost   = ^uintptr(0)
+	hwndNoTopmost = ^uintptr(1)
+
+	spiGetAnimation = 0x0048
+	spiSetAnimation = 0x0049
 )
 
 type (
-	Window struct {
+	window struct {
 		Title  string
 		Handle syscall.Handle
 		PID    int
 	}
 
-	RECT struct {
+	rect struct {
 		Left, Top, Right, Bottom int32
+	}
+
+	anmationinfo struct {
+		Size    uint32
+		Animate int32
 	}
 )
 
-func listAllWindows() (wins []*Window, err error) {
+func listAllWindows() (wins []*window, err error) {
 	cb := syscall.NewCallback(func(hwnd syscall.Handle, lparam uintptr) uintptr {
 		b, _, _ := isWindow.Call(uintptr(hwnd))
 		if b == 0 {
@@ -163,7 +173,7 @@ func listAllWindows() (wins []*Window, err error) {
 			uintptr(unsafe.Pointer(&processID)),
 		)
 
-		win := &Window{
+		win := &window{
 			Title:  title,
 			Handle: hwnd,
 			PID:    int(processID),
@@ -218,7 +228,7 @@ func toInt(s string, max int) int32 {
 	}
 }
 
-func findFirstTarget(title string, wins []*Window, ancestors []int) *Window {
+func findFirstTarget(title string, wins []*window, ancestors []int) *window {
 	if title == "" {
 		for _, p := range ancestors {
 			for _, w := range wins {

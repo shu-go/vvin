@@ -5,9 +5,9 @@ type topmostCmd struct {
 }
 
 func (c topmostCmd) Run(g globalCmd) {
-	hwndInsertAfter := HWND_TOPMOST
+	hwndInsertAfter := hwndTopmost
 	if c.Restore {
-		hwndInsertAfter = HWND_NOTOPMOST
+		hwndInsertAfter = hwndNoTopmost
 	}
 
 	setWindowPos.Call(
@@ -17,5 +17,5 @@ func (c topmostCmd) Run(g globalCmd) {
 		0,
 		0,
 		0,
-		SWP_NOSIZE|SWP_NOMOVE)
+		swpNoSize|swpNoMove)
 }

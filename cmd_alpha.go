@@ -19,12 +19,12 @@ func (c alphaCmd) Run(args []string, g globalCmd) error {
 		rog.Printf("alpha = %v -> %v", args[0], alpha)
 	}
 
-	style, _, _ := getWindowLong.Call(uintptr(g.targetHandle), GWL_EXSTYLE)
-	setWindowLong.Call(uintptr(g.targetHandle), GWL_EXSTYLE, style|WS_EX_LAYERED)
+	style, _, _ := getWindowLong.Call(uintptr(g.targetHandle), gwlEXStyle)
+	setWindowLong.Call(uintptr(g.targetHandle), gwlEXStyle, style|wsEXLayered)
 
-	setLayeredWindowAttributes.Call(uintptr(g.targetHandle), 0, uintptr(alpha), LWA_ALPHA)
+	setLayeredWindowAttributes.Call(uintptr(g.targetHandle), 0, uintptr(alpha), lwaAlpha)
 	if alpha == 255 {
-		setWindowLong.Call(uintptr(g.targetHandle), GWL_EXSTYLE, style&^WS_EX_LAYERED)
+		setWindowLong.Call(uintptr(g.targetHandle), gwlEXStyle, style&^wsEXLayered)
 	}
 
 	return nil

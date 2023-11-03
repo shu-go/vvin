@@ -30,10 +30,13 @@ func (c waitCmd) Run(args []string) error {
 	t := strings.ToLower(args[0])
 
 	var ctx context.Context
+	var cancel func()
+
 	if c.Timeout == 0 {
 		ctx = context.Background()
+		cancel = func() {}
 	} else {
-		ctx, _ = context.WithTimeout(context.Background(), c.Timeout.Duration())
+		ctx, cancel = context.WithTimeout(context.Background(), c.Timeout.Duration())
 	}
 
 	signalChan := make(chan os.Signal, 1)
@@ -45,6 +48,7 @@ waitLoop:
 	for {
 		wins, err := listAllWindows()
 		if err != nil {
+			cancel()
 			return err
 		}
 
@@ -72,6 +76,7 @@ waitLoop:
 
 		time.Sleep(c.Interval.Duration())
 	}
+	cancel()
 
 	return nil
 }

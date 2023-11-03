@@ -1,9 +1,16 @@
 module github.com/shu-go/vvin
 
-go 1.13
+go 1.21
 
 require (
-	github.com/mitchellh/go-ps v0.0.0-20190716172923-621e5597135b
-	github.com/shu-go/gli v1.5.2
+	github.com/mitchellh/go-ps v1.0.0
+	github.com/shu-go/gli v1.5.7
 	github.com/shu-go/rog v0.1.0
+)
+
+require (
+	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/shu-go/cliparser v0.2.2 // indirect
 )

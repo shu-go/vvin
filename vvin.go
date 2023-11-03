@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"time"
 	"unsafe"
 
 	"github.com/mitchellh/go-ps"
@@ -17,12 +16,6 @@ import (
 
 // Version is app version
 var Version string
-
-func init() {
-	if Version == "" {
-		Version = "dev-" + time.Now().Format("20060102")
-	}
-}
 
 type globalCmd struct {
 	Target string `cli:"target,t=WINDOW_TITLE" help:"default to current window"`
@@ -37,8 +30,7 @@ type globalCmd struct {
 
 	targetHandle syscall.Handle
 
-	scrWidth, scrHeight     int
-	frameWidth, frameHeight int
+	scrWidth, scrHeight int
 }
 
 func (c *globalCmd) Before() error {
@@ -121,8 +113,8 @@ const (
 	hwndTopmost   = ^uintptr(0)
 	hwndNoTopmost = ^uintptr(1)
 
-	spiGetAnimation = 0x0048
-	spiSetAnimation = 0x0049
+	//spiGetAnimation = 0x0048
+	//spiSetAnimation = 0x0049
 )
 
 type (
@@ -134,11 +126,6 @@ type (
 
 	rect struct {
 		Left, Top, Right, Bottom int32
-	}
-
-	anmationinfo struct {
-		Size    uint32
-		Animate int32
 	}
 )
 

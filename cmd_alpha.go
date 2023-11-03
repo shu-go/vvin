@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 
-	"github.com/shu-go/rog"
+	"github.com/shu-go/nmfmt"
 )
 
 type alphaCmd struct {
@@ -11,19 +11,23 @@ type alphaCmd struct {
 
 func (c alphaCmd) Run(args []string, g globalCmd) error {
 	if len(args) != 1 {
-		return errors.New("an argument is required")
+		return errors.New("an argument (opacity; 0%-100% or 0-255) is required")
 	}
 
-	alpha := toInt(args[0], 255)
+	opacity := toInt(args[0], 255)
 	if g.Debug {
-		rog.Printf("alpha = %v -> %v", args[0], alpha)
+		nmfmt.Printf("opacity = $arg -> $opacity/255",
+			nmfmt.M{
+				"arg":     args[0],
+				"opacity": opacity,
+			})
 	}
 
 	style, _, _ := getWindowLong.Call(uintptr(g.targetHandle), gwlEXStyle)
 	setWindowLong.Call(uintptr(g.targetHandle), gwlEXStyle, style|wsEXLayered)
 
-	setLayeredWindowAttributes.Call(uintptr(g.targetHandle), 0, uintptr(alpha), lwaAlpha)
-	if alpha == 255 {
+	setLayeredWindowAttributes.Call(uintptr(g.targetHandle), 0, uintptr(opacity), lwaAlpha)
+	if opacity == 255 {
 		setWindowLong.Call(uintptr(g.targetHandle), gwlEXStyle, style&^wsEXLayered)
 	}
 

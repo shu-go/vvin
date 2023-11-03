@@ -18,7 +18,7 @@ type waitCmd struct {
 
 	Closed   bool         `help:"wait until the window is closed"`
 	Interval gli.Duration `cli:"interval,i=DURATION" default:"1s"`
-	Timeout  gli.Duration `cli:"timeout=DURATION" default:"0s" help:"zelo value means ininite"`
+	Timeout  gli.Duration `cli:"timeout=DURATION" default:"0s" help:"zero value means ininite"`
 }
 
 func (c waitCmd) Run(args []string) error {

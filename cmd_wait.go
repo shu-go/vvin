@@ -9,16 +9,14 @@ import (
 	"strings"
 	"syscall"
 	"time"
-
-	"github.com/shu-go/gli"
 )
 
 type waitCmd struct {
 	_ struct{} `help:"[--close] {Title}"`
 
-	Closed   bool         `help:"wait until the window is closed"`
-	Interval gli.Duration `cli:"interval,i=DURATION" default:"1s"`
-	Timeout  gli.Duration `cli:"timeout=DURATION" default:"0s" help:"zero value means ininite"`
+	Closed   bool          `help:"wait until the window is closed"`
+	Interval time.Duration `cli:"interval,i=DURATION" default:"1s"`
+	Timeout  time.Duration `cli:"timeout=DURATION" default:"0s" help:"zero value means ininite"`
 }
 
 func (c waitCmd) Run(args []string) error {
@@ -36,7 +34,7 @@ func (c waitCmd) Run(args []string) error {
 		ctx = context.Background()
 		cancel = func() {}
 	} else {
-		ctx, cancel = context.WithTimeout(context.Background(), c.Timeout.Duration())
+		ctx, cancel = context.WithTimeout(context.Background(), c.Timeout)
 	}
 
 	signalChan := make(chan os.Signal, 1)
@@ -74,7 +72,7 @@ waitLoop:
 			//nop
 		}
 
-		time.Sleep(c.Interval.Duration())
+		time.Sleep(c.Interval)
 	}
 	cancel()
 

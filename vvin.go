@@ -11,7 +11,7 @@ import (
 	"unsafe"
 
 	"github.com/mitchellh/go-ps"
-	"github.com/shu-go/gli"
+	"github.com/shu-go/gli/v2"
 )
 
 // Version is app version

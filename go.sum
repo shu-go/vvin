@@ -1,4 +1,3 @@
-github.com/mattn/go-runewidth v0.0.14/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/mattn/go-runewidth v0.0.15 h1:UNAjwbU9l54TA3KzvqLGxwWjHmMgBUVhBiTjelZgg3U=
 github.com/mattn/go-runewidth v0.0.15/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/mitchellh/go-ps v1.0.0 h1:i6ampVEEF4wQFF+bkYfwYgY+F/uYJDktmvLPf7qIgjc=
@@ -6,15 +5,15 @@ github.com/mitchellh/go-ps v1.0.0/go.mod h1:J4lOc8z8yJs6vUwklHw2XEIiT4z4C40KtWVN
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
-github.com/rivo/uniseg v0.4.3/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
 github.com/rivo/uniseg v0.4.4 h1:8TfxU8dW6PdqD27gjM8MVNuicgxIjxpm4K7x4jp8sis=
 github.com/rivo/uniseg v0.4.4/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
 github.com/shu-go/cliparser v0.2.2 h1:EONHyGHC+9l2mukTBNsxvngXro73T22kXb+agVFd0CY=
 github.com/shu-go/cliparser v0.2.2/go.mod h1:oX+xgwUi9B2OzBFudKc5ayoqWhlVAbuN67rAqyWvvQ4=
-github.com/shu-go/clise v0.0.0-20190822023516-79849fb81cfe/go.mod h1:VLiMEzXMBozBLD37i3id3qPflaupus48v/979ipQ43s=
-github.com/shu-go/gli v1.5.7 h1:bvzFPU/ArxzmCTsegXjN3nwOzvV62LPUCsa5bwBfyMg=
-github.com/shu-go/gli v1.5.7/go.mod h1:WZSG6NFYr/1rwT2F3Oms0gWyklvjJNDW6qvBfZ/tM4U=
+github.com/shu-go/gli/v2 v2.0.1 h1:XA1QSfUdpWW1FIqLjuXo+Gs/IjEy+uviuxKQ45IRYC8=
+github.com/shu-go/gli/v2 v2.0.1/go.mod h1:pSC0XKb69hEarQpiQU74CNiKpcS7a90iJAMUGL3SinQ=
 github.com/shu-go/gotwant v0.0.0-20190920074605-b4f19c0bac91 h1:nwDc3kHbf9scf1UZIWiWw5tZF3Z4yOJAMjNN+kYXJwE=
 github.com/shu-go/gotwant v0.0.0-20190920074605-b4f19c0bac91/go.mod h1:FZepfqvib0mXjHiaQPTv0RUD5QMpMA/FHLfBQjZRRQg=
 github.com/shu-go/rog v0.1.0 h1:mplglNOiUN1ujq0UTkosB5NL/GQhFX2gRYcen7aEhTY=
 github.com/shu-go/rog v0.1.0/go.mod h1:gO+FpqgnHoxbF6FPJN6PaAEl6hcZRLNL+nQZgbbElzo=
+github.com/shu-go/nmfmt v0.1.0 h1:gL5u0yiIsegh2gofeNUpAJPWCNgOF+qIivBc9qO/KoE=
+github.com/shu-go/nmfmt v0.1.0/go.mod h1:ulgNf0sfuQEEdX2cM71sGviSEKDf9DUXlm5WtFn0PJY=

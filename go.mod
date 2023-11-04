@@ -4,8 +4,9 @@ go 1.21
 
 require (
 	github.com/mitchellh/go-ps v1.0.0
-	github.com/shu-go/gli v1.5.7
+	github.com/shu-go/gli/v2 v2.0.1
 	github.com/shu-go/rog v0.1.0
+	github.com/shu-go/nmfmt v0.1.0
 )
 
 require (

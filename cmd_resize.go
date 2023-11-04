@@ -2,9 +2,10 @@ package main
 
 import (
 	"errors"
+	"os"
 	"unsafe"
 
-	"github.com/shu-go/rog"
+	"github.com/shu-go/nmfmt"
 )
 
 type resizeCmd struct {
@@ -29,9 +30,11 @@ func (c *resizeCmd) Before(g globalCmd) error {
 
 	oldrect := c.rect
 
-	if g.Debug {
-		rog.Print(oldrect)
-	}
+	g.debug(os.Stderr, "$=original\n",
+		nmfmt.M{
+			"original": oldrect,
+		})
+
 	if c.Left != "" {
 		c.rect.Left = toInt(c.Left, g.scrWidth)
 	}
@@ -48,12 +51,11 @@ func (c *resizeCmd) Before(g globalCmd) error {
 	} else {
 		c.rect.Bottom = c.rect.Top + (oldrect.Bottom - oldrect.Top)
 	}
-	if g.Debug {
-		if c.Restore {
-			rog.Print("restore")
-		} else {
-			rog.Print(c.rect)
-		}
+
+	if c.Restore {
+		g.debug(os.Stderr, "restore\n")
+	} else {
+		g.debug(os.Stderr, "resized $rect\n", nmfmt.M{"rect": c.rect})
 	}
 
 	return nil

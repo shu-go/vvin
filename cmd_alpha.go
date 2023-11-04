@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"os"
 
 	"github.com/shu-go/nmfmt"
 )
@@ -15,13 +16,12 @@ func (c alphaCmd) Run(args []string, g globalCmd) error {
 	}
 
 	opacity := toInt(args[0], 255)
-	if g.Debug {
-		nmfmt.Printf("opacity = $arg -> $opacity/255",
-			nmfmt.M{
-				"arg":     args[0],
-				"opacity": opacity,
-			})
-	}
+
+	g.debug(os.Stderr, "opacity $=arg:q -> $opacity/255\n",
+		nmfmt.M{
+			"arg":     args[0],
+			"opacity": opacity,
+		})
 
 	style, _, _ := getWindowLong.Call(uintptr(g.targetHandle), gwlEXStyle)
 	setWindowLong.Call(uintptr(g.targetHandle), gwlEXStyle, style|wsEXLayered)

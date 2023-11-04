@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"strconv"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/mitchellh/go-ps"
 	"github.com/shu-go/gli/v2"
+	"github.com/shu-go/nmfmt"
 )
 
 // Version is app version
@@ -20,6 +22,8 @@ var Version string
 type globalCmd struct {
 	Target string `cli:"target,t=WINDOW_TITLE" help:"default to current window"`
 	Debug  bool   `help:"output debug info"`
+
+	debug func(io.Writer, string, ...any) (int, error) // nmfmt
 
 	Minimize minCmd     `cli:"minimize,min" help:"minimize/restore"`
 	Maximize maxCmd     `cli:"maximize,max" help:"maximize/restore"`
@@ -34,6 +38,14 @@ type globalCmd struct {
 }
 
 func (c *globalCmd) Before() error {
+	c.debug = func(io.Writer, string, ...any) (int, error) {
+		return 0, nil
+	}
+	if c.Debug {
+		c.debug = nmfmt.Fprintf
+	}
+	c.debug(os.Stderr, "Debug enabled.\n")
+
 	wins, err := listAllWindows()
 	if err != nil {
 		return err
@@ -44,6 +56,12 @@ func (c *globalCmd) Before() error {
 		return errors.New("no target")
 	}
 	c.targetHandle = win.Handle
+
+	c.debug(os.Stderr, "$=target:q -> $=handle:x\n",
+		nmfmt.M{
+			"target": c.Target,
+			"handle": c.targetHandle,
+		})
 
 	w, _, _ := getSystemMetrics.Call(smCXVirtualScreen)
 	h, _, _ := getSystemMetrics.Call(smCYVirtualScreen)

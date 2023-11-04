@@ -66,7 +66,7 @@ waitLoop:
 			fmt.Fprintln(os.Stderr, "cancelled")
 			break waitLoop
 		case <-ctx.Done():
-			fmt.Fprintln(os.Stderr, "cancelled")
+			fmt.Fprintln(os.Stderr, "cancelled (timeout)")
 			break waitLoop
 		default:
 			//nop
